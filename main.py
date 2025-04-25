@@ -17,9 +17,9 @@ SERVO_CLOSED = 0    # Lid closed position (degrees)
 SERVO_OPEN = 90     # Lid open position (degrees)
 
 # Timing (milliseconds)
-ACTIVE_TIME = 8000  # How long to stay active after motion
+ACTIVE_TIME = 10000  # How long to stay active after motion
 POLL_INTERVAL = 50  # How often to check distance
-CLOSE_DELAY = 100   # Delay before closing after person leaves
+CLOSE_DELAY = 4000   # Delay before closing after person leaves
 
 # Ultrasonic settings
 MAX_FAILURES = 5            # Bad readings before forcing lid open
@@ -161,7 +161,7 @@ class LidController:
     def test_servo(self):
         """Test servo with initialization sequence"""
         self.servo.move(SERVO_CLOSED)
-        self.servo.move(180)         # Full test of range
+        self.servo.move(SERVO_OPEN)         # Open and close test
         self.servo.move(SERVO_CLOSED)
         log("Servo initialization complete", 2)
         
@@ -279,4 +279,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
