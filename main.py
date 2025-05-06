@@ -30,6 +30,7 @@ CLOSE_DELAY = 4000   # Delay before closing after person leaves
 MAX_FAILURES = 5            # Bad readings before forcing lid open
 DISTANCE_THRESHOLD = 5      # cm difference to trigger detection
 CALIBRATION_SAMPLES = 5     # Readings to average during calibration
+CALIBRATION_DELAY = 10      # delay calibration by this amount of seconds
 
 # Logging level: 0=ERROR, 1=WARN, 2=INFO, 3=DEBUG
 LOG_LEVEL = 3
@@ -275,11 +276,15 @@ class LidController:
 
                             self.person_left_at = 0 # Reset timer when person is present
 
-                        else: # No person detected (or back to baseline)
+                        else: # No person detected (or back to baseline) 
                             if self.person_present:
                                 log("Person moved away", 2)
                                 self.person_present = False
                                 self.person_left_at = now # Start close delay timer
+                            elif self.lid_open and self.person_left_at == 0:
+                                # Make sure timer is always set when no person is present and lid is open
+                                log("No person detected and timer not set - setting close timer", 2)
+                                self.person_left_at = now
 
                 # Close lid logic
                 if (self.lid_open and
@@ -316,6 +321,8 @@ class LidController:
 
 # === Program Entry Point ===
 def main():
+    utime.sleep(CALIBRATION_DELAY)
+    
     log("="*34, 2)
     log("SMART LID CONTROLLER STARTING", 2)
     log("="*34, 2)
